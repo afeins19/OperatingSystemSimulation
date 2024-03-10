@@ -7,6 +7,11 @@ class CommandHandler:
     def __init__(self):
         self.process_manager = process_manager()
 
+        # mapping 'program' names to their functions
+        self.apps = {
+            'TestApp' : 'TestApp()'
+        }
+
     def dispatch_command(self, args):
         # sends command and args to their respective handler functions
         if args.command == 'os':
@@ -46,9 +51,9 @@ class CommandHandler:
 
         # -- PROCESS COMMANDS --
 
-    def start_process(self):
+    def start_process(self, process_name, function_to_run):
         # logic for starting the process
-        pass
+        self.process_manager.start_process(name=process_name, function_to_run=function_to_run)
 
     def kill_processs(self, pid):
         # logic for killing a process

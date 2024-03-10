@@ -10,7 +10,19 @@ def main():
                f"\n-..-'|   ||   |"
                f"\n-..-'|_.-''-._|")
 
-    OS_HELP_MSG = f"Welcome to Michaelsoft Binbows { OS_LOGO }"
+    OS_FAREWELL = \
+     (f"\n▐▓█▀▀▀▀▀▀▀▀▀█▓▌░▄▄▄▄▄░"
+      f"\n▐▓█░ Good  ░█▓▌░█▄▄▄█░"
+      f"\n▐▓█░ ▄Bye!▀░█▓▌░█▄▄▄█░"
+      f"\n ▓█▄▄▄▄▄▄▄▄▄█▓▌░█████░"
+      f"\n░░░░▄▄███▄▄░░░░░█████░")
+
+    OS_WELCOME_MSG = (f"**********************************"
+                      f"\n* ㋡     Welcome to psuOS      ㋡ *"
+                      f"\n*    Program by: Aaron Feinberg  *"       
+                      f"\n**********************************"
+                      f"\n"
+                      f"{ OS_LOGO }")
 
     parser = argparse.ArgumentParser(description='Task Manger') # setting up the main parser
     subparsers = parser.add_subparsers(dest='command', required=True)  # defining sub parsers for each command and thier args
@@ -37,16 +49,16 @@ def main():
 
     # killing processes
     process_kill = process_subparsers.add_parser('kill', help='Terminate a process that is currently running')
-    process_kill.add_argument('process_name', help='Name of the process')
+    process_kill.add_argument('PID', help='Proces ID')
     process_kill.add_argument('--f', action='store_true', help='Force kill the process')
 
     # suspending processes
     process_suspend = process_subparsers.add_parser('suspend', help='Pause the execution of a process')
-    process_suspend.add_argument('process_name', help='Name of the process')
+    process_suspend.add_argument('PID', help='Proces ID')
 
     # resuming processes
     process_resume = process_subparsers.add_parser('resume', help='Resume a currently running process')
-    process_resume.add_argument('process_name', help='Name of the process')
+    process_resume.add_argument('PID', help='Proces ID')
 
        # PARSERS FOR THREADS
 
@@ -71,14 +83,16 @@ def main():
 
 
     # -- welcome page --
-    print(OS_HELP_MSG, end='\n\n')
+    print(OS_WELCOME_MSG, end='\n\n')
 
     # << program loop >>
     while True:
         try:
-            user_cmd = input(">> ")
+            user_cmd = input("㋡ >> ")
 
             if user_cmd == 'exit':
+                print("\nExiting...")
+                print(OS_FAREWELL)
                 break
 
             # give the parser the arguments
@@ -90,6 +104,7 @@ def main():
         except SystemExit:
             # exceptions from external libraries
             pass
+
 
 if __name__ == "__main__":
     main()
