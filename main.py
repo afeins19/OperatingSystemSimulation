@@ -38,6 +38,7 @@ def main():
     # killing processes
     process_kill = process_subparsers.add_parser('kill', help='Terminate a process that is currently running')
     process_kill.add_argument('process_name', help='Name of the process')
+    process_kill.add_argument('--f', action='store_true', help='Force kill the process')
 
     # suspending processes
     process_suspend = process_subparsers.add_parser('suspend', help='Pause the execution of a process')
