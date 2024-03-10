@@ -2,12 +2,13 @@
 
 import argparse # argument parsing library
 # import task_manager
-import process_manager
+from process_manager import ProcessManager
 class CommandHandler:
     def __init__(self):
-        self.process_manager = process_manager()
+        self.process_manager = ProcessManager()
 
-    def dispatch_command(self, args):
+
+    def handle_command(self, args):
         # sends command and args to their respective handler functions
         if args.command == 'os':
             if args.os_command == 'list':
@@ -15,7 +16,7 @@ class CommandHandler:
 
         elif args.command == 'process':
             if args.process_command == 'start':
-                self.start_process()
+                self.start_process(name=args.process_name)
 
             elif args.process_command == 'kill':
                 self.kill_processs(pid=args.proccess_name)
@@ -46,8 +47,13 @@ class CommandHandler:
 
         # -- PROCESS COMMANDS --
 
-    def start_process(self):
+    def start_process(self, name, function_to_execute, args=None):
         # logic for starting the process
+        if args:
+            pid = self.process_manager.start_process(name, function_to_execute, args=args)
+        else:
+            pid = self.process_manager.start_process(name, function_to_execute)
+        print(f"Starting process '{name}' | PID: {pid}")
         pass
 
     def kill_processs(self, pid):

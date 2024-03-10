@@ -14,14 +14,15 @@ class ProcessManager:
         shared_array = Array(dtype, size)
         self.shared_memory_locations.append(shared_array)
         return shared_array
+
     def create_shared_value(self, dtype, initial_value):
         shared_value = Value(dtype, initial_value)
         self.shared_memory_locations.append(shared_value)
+        return shared_value
 
     def start_process(self, name, function, *args):
         process = Process(target=function, args=args)
         process.start() # start the process
-        print(f"Starting process '{name}' | PID: {process.pid}")
         self.active_processes[process.pid] = (name, process) # save this to the list of active processes
 
         return process.pid
@@ -30,7 +31,7 @@ class ProcessManager:
         if pid in self.active_processes:
             return self.active_processes[pid]
         else:
-            print(f"\t** Process [PID={pid}] not found **")
+            return None
 
     def get_process_threads(self, pid):
         ps = psutil.Process(pid)
@@ -63,7 +64,6 @@ class ProcessManager:
 
         return p_stats
 
-
     def kill_process(self, pid, force=False):
         if pid in self.active_processes:
             process = self.active_processes[pid][1] # retrieve process
@@ -78,6 +78,5 @@ class ProcessManager:
 
         else:
             print(f"\t** Process [PID={ pid }] not found ** ")
-
 
 
