@@ -2,8 +2,10 @@
 
 import argparse # argument parsing library
 # import task_manager
-
+import process_manager
 class CommandHandler:
+    def __init__(self):
+        self.process_manager = process_manager()
 
     def dispatch_command(self, args):
         # sends command and args to their respective handler functions
@@ -45,7 +47,7 @@ class CommandHandler:
         # -- PROCESS COMMANDS --
 
     def start_process(self):
-        # logic for processes threads
+        # logic for starting the process
         pass
 
     def kill_processs(self, pid):
