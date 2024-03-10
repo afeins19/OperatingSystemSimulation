@@ -2,7 +2,7 @@
 import time
 import unittest
 import sys
-sys.path.append(r'C:\Users\aaron\Projects\classWork\CMPSC472\OperatingSystemSimulation')
+sys.path.append(r'/Users/aaronfeinberg/Projects/classWork/CMPSC472/OperatingSystemSimulation')
 import multiprocessing
 
 from process_manager import ProcessManager

@@ -1,11 +1,22 @@
 # this class will handle processes and their interactions
+import multiprocessing
 import time
-from multiprocessing import Process
+from multiprocessing import Array, Process, Value
 import psutil
 
 class ProcessManager:
     def __init__(self):
         self.active_processes = {}
+        # shared variable space for processes to share memory
+        self.shared_memory_locations = []
+
+    def create_shared_array(self, dtype, size):
+        shared_array = Array(dtype, size)
+        self.shared_memory_locations.append(shared_array)
+        return shared_array
+    def create_shared_value(self, dtype, initial_value):
+        shared_value = Value(dtype, initial_value)
+        self.shared_memory_locations.append(shared_value)
 
     def start_process(self, name, function, *args):
         process = Process(target=function, args=args)
@@ -43,6 +54,15 @@ class ProcessManager:
             print(f"\t** Process [PID={pid}] Not Found **")
 
         return None
+
+    def get_active_process_stats(self):
+        p_stats = []
+
+        for process in self.active_processes:
+            p_stats.append(process)
+
+        return p_stats
+
 
     def kill_process(self, pid, force=False):
         if pid in self.active_processes:

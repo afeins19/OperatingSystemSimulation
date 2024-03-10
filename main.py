@@ -1,5 +1,6 @@
 # this is the entry point to the operating system. This file dispatches all other necessary resources and libraries
 import argparse # module used for interpreting user commands
+from tabulate import tabulate
 from command_handler import CommandHandler
 
 def main():
@@ -11,6 +12,7 @@ def main():
                f"\n-..-'|_.-''-._|")
 
     OS_HELP_MSG = f"Welcome to Michaelsoft Binbows { OS_LOGO }"
+
 
     parser = argparse.ArgumentParser(description='Task Manger') # setting up the main parser
     subparsers = parser.add_subparsers(dest='command', required=True)  # defining sub parsers for each command and thier args
@@ -90,6 +92,44 @@ def main():
         except SystemExit:
             # exceptions from external libraries
             pass
+
+def tabulate_processes(process_info=[]):
+    if not process_info:
+        print("\t** No Running Processes **")
+        return None
+
+    # display panel showing running processes
+    headers = ['PID', 'Name', 'Status' ,'Number of Threads']
+    process_table = tabulate(process_info, headers=headers, tablefmt="grid")
+    return process_table
+
+def tabulate_threads(thread_info=[]):
+    if not thread_info:
+        print("\t** No Running Threads **")
+        return None
+
+    # display panel showing running processes
+    headers = ['TID', 'is alive?']
+    thread_table = tabulate(thread_info, headers=headers, tablefmt="grid")
+    return thread_table
+
+def display_system(process_info, thread_info):
+    # display processes first
+    if not process_info:
+        print("\t** No Running Processes **")
+
+    elif process_info:
+        print("\tProcesses:")
+        print(tabulate_processes(process_info))
+
+
+    if not thread_info:
+        print("\t** No Running Threads **")
+    elif thread_info:
+        print("\n*****************************************")
+        print("\tThreads:")
+        print(tabulate_threads(thread_info))
+
 
 if __name__ == "__main__":
     main()
