@@ -5,30 +5,78 @@ import argparse # argument parsing library
 
 class CommandHandler:
 
+    def dispatch_command(self, args):
+        # sends command and args to their respective handler functions
+        if args.command == 'os':
+            if args.os_command == 'list':
+                self.os_list()
 
-    def dispatch_command(self, command_name, *args):
-        cmd = self.commands.get(command_name)
+        elif args.command == 'process':
+            if args.process_command == 'start':
+                self.start_process()
 
-        if cmd:
-            cmd['methods'](*args) # dispatch the command to the correct method
-        else:
-            print(f"Invalid Command: { command_name }")
+            elif args.process_command == 'kill':
+                self.kill_processs(pid=args.proccess_name)
 
-    def list_threads(self):
-        # logic for showing threads to the user
+            elif args.process_command == 'suspend':
+                self.suspend_proces(pid=args.proccess_name)
+
+            elif args.process_command == 'resume':
+                self.resume_proces(pid=args.proccess_name)
+
+        elif args.command == 'thread':
+            if args.thread_command == 'start':
+                self.start_process()
+
+            elif args.thread_command == 'kill':
+                self.kill_processs(pid=args.proccess_name)
+
+            elif args.thread_command == 'suspend':
+                self.suspend_proces(pid=args.proccess_name)
+
+            elif args.thread_command == 'resume':
+                self.resume_proces(pid=args.proccess_name)
+
+                    # -- OS COMMANDS --
+    def os_list(self):
+        # logic for showing processes to the user
         pass
-    def create_thread(self):
-        # logic for creating threads
+
+        # -- PROCESS COMMANDS --
+
+    def start_process(self):
+        # logic for processes threads
         pass
-    def kill_thread(self, thread_id):
+
+    def kill_processs(self, pid):
+        # logic for killing a process
+        pass
+
+    def suspend_process(self, pid):
+        # logic for suspending a processs
+        pass
+
+    def resume_proces(self, pid):
+        # logic for resuming a process
+        pass
+
+        # -- THREAD COMMANDS --
+
+    def start_thread(self):
+        # logic for starting a thread
+        pass
+
+    def suspend_thread(self, tid):
+        # logic for suspending a thread
+        pass
+
+    def resume_thread(self, tid):
+        # logic for resuming a thread
+        pass
+
+    def kill_thread(self, tid):
         # logic for killing a thread
         pass
-    def show_help_menu(self):
-        print("\n\t- Commands -\n")
 
-        for name, info, args in self.commands.items():
-            print(f"\n{name}\t{info}", end="")
 
-            if args:
-                print(f"\t | args: { args }\n")
 

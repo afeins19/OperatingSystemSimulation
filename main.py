@@ -69,6 +69,9 @@ def main():
     thread_resume.add_argument('thread_name', help='Name of the thread')
 
 
+    # -- welcome page --
+    print(OS_HELP_MSG, end='\n\n')
+
     # << program loop >>
     while True:
         try:
