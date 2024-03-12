@@ -17,10 +17,10 @@ def process_user_input(parser, command_handler):
 
     try:
         time.sleep(.1)
-        user_cmd = input(">> ")
+        user_cmd = input("")
 
         # log the input
-        # lgr.info(f"USER_INPUT: {user_cmd}")
+        lgr.info(f"USER_INPUT: {user_cmd}")
 
         if user_cmd == 'exit':
             return None
@@ -37,7 +37,7 @@ def process_user_input(parser, command_handler):
     except SystemExit:
         # exceptions from external libraries won't cause crashes
         lgr.info(f"EXCEPTION: SystemExit")
-
+        pass
 
     return 1
 def main():
@@ -76,16 +76,16 @@ def main():
 
     # killing processes
     process_kill = process_subparsers.add_parser('kill', help='Terminate a process that is currently running')
-    process_kill.add_argument('process_name', help='Name of the process')
-    process_kill.add_argument('--f', action='store_true', help='Force kill the process')
+    process_kill.add_argument('pid', help='PID of the process')
+   # process_kill.add_argument('--f', action='store_true', help='Force kill the process')
 
     # suspending processes
     process_suspend = process_subparsers.add_parser('suspend', help='Pause the execution of a process')
-    process_suspend.add_argument('process_name', help='Name of the process')
+    process_suspend.add_argument('pid', help='PID of the process')
 
     # resuming processes
     process_resume = process_subparsers.add_parser('resume', help='Resume a currently running process')
-    process_resume.add_argument('process_name', help='Name of the process')
+    process_resume.add_argument('pid', help='PID of the process')
 
     # PARSERS FOR THREADS
     thread_parser = subparsers.add_parser('thread', help='Manage threads')
@@ -97,15 +97,15 @@ def main():
 
     # killing processes
     thread_kill = thread_subparsers.add_parser('kill', help='Terminate a thread that is currently running')
-    thread_kill.add_argument('thread_name', help='Name of the thread')
+    thread_kill.add_argument('tid', help='TID of the thread')
 
     # suspending processes
     thread_suspend = thread_subparsers.add_parser('suspend', help='Pause the execution of a thread')
-    thread_suspend.add_argument('thread_name', help='Name of the thread')
+    thread_suspend.add_argument('tid', help='TID of the thread')
 
     # resuming processes
     thread_resume = thread_subparsers.add_parser('resume', help='Resume a currently running thread')
-    thread_resume.add_argument('thread_name', help='Name of the thread')
+    thread_resume.add_argument('tid', help='TID of the thread')
 
     # -- welcome page --
     print(OS_HELP_MSG, end='\n\n')
@@ -119,6 +119,7 @@ def main():
     # << program loop >>
     while process_user_input(parser, cmd_handler):
         continue
+
 
 
 if __name__ == "__main__":
