@@ -14,30 +14,31 @@ def process_user_input(parser, command_handler):
     psr = parser
     cmd_handler = command_handler
 
+    while True:
+        try:
+            time.sleep(.1)
+            user_cmd = input("")
 
-    try:
-        time.sleep(.1)
-        user_cmd = input("")
+            # log the input
+            lgr.info(f"USER_INPUT: {user_cmd}")
 
-        # log the input
-        lgr.info(f"USER_INPUT: {user_cmd}")
+            if user_cmd == 'exit':
+                print("\n- Goodbye! -")
+                break
 
-        if user_cmd == 'exit':
-            return None
+            # give the parser the arguments
+            args = psr.parse_args(user_cmd.split())
+            lgr.info(f"[[ USER INPUT : {args}")
 
-        # give the parser the arguments
-        args = psr.parse_args(user_cmd.split())
-        lgr.info(f"[[ USER INPUT : {args}")
+            # debug for some problems
+            # debug(args)
 
-        # debug for some problems
-        # debug(args)
+            cmd_handler.handle_command(args)  # give commands with args to the cmd handler
 
-        cmd_handler.handle_command(args)  # give commands with args to the cmd handler
-
-    except SystemExit:
-        # exceptions from external libraries won't cause crashes
-        lgr.info(f"EXCEPTION: SystemExit")
-        pass
+        except SystemExit:
+            # exceptions from external libraries won't cause crashes
+            lgr.info(f"EXCEPTION: SystemExit")
+            pass
 
     return 1
 def main():
@@ -117,9 +118,7 @@ def main():
     lgr = setup_logger()
     lgr.info("[[ STARTUP SUCCESFUL ]]")
     # << program loop >>
-    while process_user_input(parser, cmd_handler):
-        continue
-
+    process_user_input(parser=parser, command_handler=cmd_handler)
 
 
 if __name__ == "__main__":

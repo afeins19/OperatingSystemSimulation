@@ -2,6 +2,8 @@
 
 import argparse # argument parsing library
 import multiprocessing
+
+import psutil
 from psutil import Process
 from thread_manager import ThreadManager
 from threading import Thread
@@ -68,7 +70,6 @@ class CommandHandler:
         ps_names = [p['name'] for p in self.process_manager.active_processes.values()]
         ps_suspended = [p['pause_event'].is_set() for p in self.process_manager.active_processes.values()]
 
-
         threads = self.thread_manager.active_threads.values()
 
         th_tids = [t[0].ident for t in self.thread_manager.active_threads.values()]
@@ -80,7 +81,8 @@ class CommandHandler:
 
         ps_info = {'pid': [ps.pid for ps in ps_processes],
                    'name': [name for name in ps_names],
-                   'is_suspended' : [status for status in ps_suspended]}
+                   'is_suspended' : [status for status in ps_suspended],
+                   }
 
         th_info = {'tid': [tid for tid in th_tids],
                    'is_active': [ia for ia in th_statuses],
@@ -97,13 +99,13 @@ class CommandHandler:
         if len(process_info['pid']) == 0:
             print("\t** No Running Processes **")
         else:
-            print("\tProcesses:")
+            print("\n\t\t- Processes -")
             print(self.tabulate_processes(process_info))
 
         if len(thread_info['tid']) == 0:
-            print("\t ** No Running Threads **")
+            print("\n\t ** No Running Threads **")
         else:
-            print("\tThreads:")
+            print("\n\t\t - Threads -")
             print(self.tabulate_threads(thread_info))
 
     def tabulate_processes(self, process_info={}):
