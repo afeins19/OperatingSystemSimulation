@@ -27,17 +27,17 @@ class TestProcessManager(unittest.TestCase):
         self.invalid_pid = -123
 
     def test_start_stop_process(self):
-        # Start the process
+        # start the process
         self.pm.start_process(name=self.p_name, target_function=sample_process)
 
-        # Let it actually startup
+        # let it actually startup
         time.sleep(0.5)
 
-        # Check if it's in the actives
+        # check if it's in the actives
         active_names = [data['name'] for pid, data in self.pm.active_processes.items()]
         self.assertIn(self.p_name, active_names)
 
-        # Cleanup
+        # clean
         pid = next(iter(self.pm.active_processes))
         self.pm.kill_process(pid)
 
@@ -55,18 +55,17 @@ class TestProcessManager(unittest.TestCase):
         self.assertEqual(shared_val.value, 0)
 
     def test_increment_shared_value(self):
-        # Create shared value using ProcessManager's method
+        # make shared value using ProcessManager's method
         shared_val: Value = self.pm.create_shared_value('i', 0)
 
-        # Create some processes to increment the shared value
+        # make some processes to increment the shared value
         for i in range(5):
             self.pm.start_process(f"test_{i}", increment_shared_value, shared_val)
 
-        # Wait for all processes to complete
+        # wait for all processes to complete
         for pid, data in self.pm.active_processes.items():
             data['process'].join()
 
-        # Assert that the shared value has been incremented correctly
         self.assertEqual(shared_val.value, 5)
 
 
