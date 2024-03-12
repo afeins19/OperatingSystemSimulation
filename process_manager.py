@@ -59,11 +59,10 @@ class ProcessManager:
         stop_event = Event()
 
         process_control = ProcessControl(pause_event, resume_event, stop_event)
-        modified_args = (process_control, name,) + args
-        process = Process(target=target_function, args=modified_args)
+        process = Process(name=name, target=target_function, args=(process_control, *args))
         process.start()
 
-        # save process data to dict
+        # Save process data to dict
         self.active_processes[process.pid] = {
             'name': name,
             'process': process,
@@ -71,10 +70,10 @@ class ProcessManager:
             'resume_event': resume_event,
             'stop_event': stop_event
         }
-
+        lgr.info(f"[[ Started process '{name}' | PID: {process.pid} ]]")
         print(f"[[ Started process '{name}' | PID: {process.pid} ]]")
-        return process.pid
 
+        return process.pid
 
     def kill_process(self, pid):
         pid = int(pid)
