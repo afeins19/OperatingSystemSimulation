@@ -6,9 +6,14 @@ import psutil
 import os
 import signal
 import threading
+import logging
+
+from log_config import setup_logger
 
 # Value - shared variable
 # Queue - message passing
+
+lgr = setup_logger(__name__)
 
 class ProcessManager:
     def __init__(self):
@@ -16,15 +21,16 @@ class ProcessManager:
 
         # shared variable space for processes to share memory
         self.shared_memory_locations = []
-        self.log = []
 
         # create a thread to check for completed processses and drop em from active_processes
         self.monitoring_thread = threading.Thread(target=self.start_monitoring_processes)
         self.monitoring_thread.start()
+
+
     def start_monitoring_processes(self): # call processs is_active check function repeatedly
         while True:
             self.remove_completed_processes()
-            time.sleep(1)
+            time.sleep(.5)
 
     def remove_completed_processes(self):
         to_pop = []
@@ -37,6 +43,8 @@ class ProcessManager:
 
         for pid in to_pop:
             del self.active_processes[pid]
+
+
     def create_shared_array(self, dtype, size):
         shared_array = Array(dtype, size)
         self.shared_memory_locations.append(shared_array)
@@ -57,9 +65,11 @@ class ProcessManager:
         process = Process(target=function, args=args)
 
         process.start() # start the process
-        process.join()
+
         self.active_processes[process.pid] = (name, process)  # save this to the list of active processes
-        print(f"Started process '{ name }' | PID: { process.pid }")
+        # print(f"Started process '{ name }' | PID: { process.pid }", end="\n")
+        print(f"Started process '{name}' | PID: {process.pid}")
+        lgr.info(f"Started process '{name}' | PID: {process.pid}")
 
 
         return process.pid
@@ -89,7 +99,9 @@ class ProcessManager:
             return stats
 
         except psutil.NoSuchProcess:
-            print(f"\t** Process [PID={pid}] Not Found **")
+            print(f"** Process [PID={pid}] Not Found **")
+            lgr.info(f"** Process [PID={pid}] Not Found **")
+
 
         return None
 
@@ -109,21 +121,28 @@ class ProcessManager:
             process.terminate() # end the process
 
             if not force:
-                print(f"\t** Terminating process [PID={ pid }]  ** ")
+                lgr.info(f"** Terminating process [PID={ pid }]  ** ")
+                print(f"** Terminating process [PID={pid}]  ** ")
                 process.join()
 
             else:
-                print(f"\t** Terminating process [PID={pid}] forcefully ** ")
+                lgr.info(f"** Terminating process [PID={pid}] forcefully ** ")
+                print(f"** Terminating process [PID={pid}] forcefully ** ")
 
             del self.active_processes[pid] # drop the process from active list
 
         else:
-            print(f"\t** Process [PID={ pid }] not found ** ")
+            lgr.info(f"** Process [PID={ pid }] not found ** ")
+            print(lgr.info(f"** Process [PID={ pid }] not found ** "))
 
     def suspend_proccess(self, pid):
         os.kill(pid, signal.SIGSTOP) # sends a stop signal to the process
+        lgr.info(f"process [PID={ pid }] has been suspended")
+        print(lgr.info(f"process [PID={ pid }] has been suspended"))
 
     def resume_process(self, pid):
         os.kill(pid, signal.SIGCONT) # sends a signal to continue the process
+        lgr.info(f"process [PID={ pid }] has been resumed")
+        print(lgr.info(f"process [PID={ pid }] has been resumed"))
 
 

@@ -9,7 +9,10 @@ from threading import Thread
 from process_manager import ProcessManager
 from tabulate import tabulate
 
-from appmanager import AppManager
+from app_manager import AppManager
+from log_config import setup_logger
+
+lgr = setup_logger(__name__)
 
 class CommandHandler:
     def __init__(self):
@@ -17,8 +20,7 @@ class CommandHandler:
         self.thread_manager = ThreadManager()
 
         # initiazlie the app library
-        self.app_manger = AppManager()
-
+        self.app_manager = AppManager()
 
     def handle_command(self, args):
         # sends command and args to their respective handler functions
@@ -33,7 +35,7 @@ class CommandHandler:
         elif args.command == 'process':
             if args.process_command == 'start':
                 # lookup process in the app library
-                app = self.app_manger.get_app(args.process_name)
+                app = self.app_manager.get_app(args.process_name)
 
                 if app:
                     self.start_process(name=args.process_name,
@@ -45,23 +47,29 @@ class CommandHandler:
                 self.kill_processs(pid=args.process_name)
 
             elif args.process_command == 'suspend':
-                self.suspend_proces(pid=args.process_name)
+                self.suspend_process(pid=args.process_name)
 
             elif args.process_command == 'resume':
                 self.resume_proces(pid=args.proccess_name)
 
         elif args.command == 'thread':
             if args.thread_command == 'start':
-                self.start_thread()
+                app = self.app_manager.get_app(args.thread_name)
+
+                if app:
+                    self.start_thread(app)
 
             elif args.thread_command == 'kill':
-                self.kill_thread(pid=args.proccess_name)
+                self.kill_thread(tid=args.thread_name)
 
             elif args.thread_command == 'suspend':
-                self.suspend_thread(pid=args.proccess_name)
+                self.suspend_thread(tid=args.thread_name)
 
             elif args.thread_command == 'resume':
-                self.resume_proces(pid=args.proccess_name)
+                self.resume_proces(tid=args.thread_name)
+
+        # lgr.info(f"[[ USER COMMAND: { args }]] ") logging from main instead to get invalid user input
+
 
                     # -- OS COMMANDS --
     def os_list(self):
@@ -69,7 +77,10 @@ class CommandHandler:
         ps_processes = [p[1] for p in self.process_manager.active_processes.values()]
         ps_names = [p[0] for p in self.process_manager.active_processes.values()]
 
-        threads = self.thread_manager.active_threads
+        threads = self.thread_manager.active_threads.values()
+        th_tids = [t[0].ident for t in self.thread_manager.active_threads.values()]
+        th_statuses = [t[0].is_alive() for t in self.thread_manager.active_threads.values()]
+        th_stop_events = [t[1].is_set() for t in self.thread_manager.active_threads.values()]
 
         process_headers = ['PID', 'Name', 'Status' ,'Number of Threads']
         thread_headers = ['TID', 'is alive?']
@@ -85,16 +96,18 @@ class CommandHandler:
             }
 
         th_info = {
-            'tid' : [th.ident for th in threads],
-            'is_active' : [th.isAlive() for th in threads] }
+            'tid' : [tid for tid in th_tids],
+            'is_active' : [ia for ia in th_statuses],
+            'stop_event' : [se for se in th_stop_events]
+        }
 
 
         self.display_system_info(ps_info, th_info)
 
         # -- SHOW A LIST OF APPS --
     def show_user_apps(self):
-        app_data = {'Name' : self.app_manger.name_table.keys(),
-                    'Function' : [str(func.__name__ + "()") for func in self.app_manger.name_table.values()]}
+        app_data = {'Name' : self.app_manager.name_table.keys(),
+                    'Function' : [str(func.__name__ + "()") for func in self.app_manager.name_table.values()]}
 
         app_table = tabulate(app_data, headers='keys', showindex='True')
         print(app_table)
@@ -150,10 +163,13 @@ class CommandHandler:
 
         # -- THREAD COMMANDS --
 
-    def start_thread(self):
-        # logic for starting a thread
-        pass
+    def start_thread(self, function_to_execute, args=None):
 
+
+        if args:
+            self.thread_manager.start_thread(function_to_execute, args)
+        else:
+            self.thread_manager.start_thread(function_to_execute)
     def suspend_thread(self, tid):
         # logic for suspending a thread
         pass
@@ -163,8 +179,7 @@ class CommandHandler:
         pass
 
     def kill_thread(self, tid):
-        # logic for killing a thread
-        pass
+        self.thread_manager.kill_thread(tid)
 
 
 
