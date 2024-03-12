@@ -57,7 +57,7 @@ class TestProcessManager(unittest.TestCase):
         # create some processes
         pids = []
 
-        for i in range(5):
+        for i in range(5): # make some processes to increment the shared value
             ps = self.pm.start_process(f"test_{i}", increment_shared_value, shared_val)
             time.sleep(.1)
             pids.append(ps)
@@ -67,6 +67,8 @@ class TestProcessManager(unittest.TestCase):
             self.pm.active_processes[pid][1].join() # wait until each process finishes before checking value
 
         self.assertEqual(shared_val.value, 5)
+
+
 
 if __name__ == '__main__':
     unittest.main()

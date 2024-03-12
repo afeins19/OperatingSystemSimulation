@@ -3,6 +3,8 @@ import argparse # module used for interpreting user commands
 from tabulate import tabulate
 from command_handler import CommandHandler
 
+def debug(arg):
+    print(f"\tARGS={arg}")
 def main():
     """initializing application resources here"""
     OS_LOGO = (f"\n      _.-;;-._ "
@@ -11,7 +13,7 @@ def main():
                f"\n-..-'|   ||   |"
                f"\n-..-'|_.-''-._|")
 
-    OS_HELP_MSG = f"Welcome to Michaelsoft Binbows { OS_LOGO }"
+    OS_HELP_MSG = f"Welcome to psuOS { OS_LOGO }"
 
 
     parser = argparse.ArgumentParser(description='Task Manger') # setting up the main parser
@@ -27,6 +29,9 @@ def main():
 
     # help
     os_help = os_cmds.add_parser('help', help='Displays a list of all commands')
+
+    # list all user apps
+    os_apps = os_cmds.add_parser('apps', help='Displays a list of all available applications')
 
         # PARSERS FOR PROCESSES
 
@@ -72,8 +77,12 @@ def main():
     thread_resume.add_argument('thread_name', help='Name of the thread')
 
 
+
     # -- welcome page --
     print(OS_HELP_MSG, end='\n\n')
+
+    # setup handler instance
+    cmd_handler = CommandHandler()
 
     # << program loop >>
     while True:
@@ -86,6 +95,11 @@ def main():
             # give the parser the arguments
             args = parser.parse_args(user_cmd.split())
 
+            # debuging for some problems
+            debug(args)
+
+            cmd_handler.handle_command(args) # give commands with args to the cmd handler
+
             # handler will execute the commands
             #   ... code here plz
 
@@ -93,43 +107,7 @@ def main():
             # exceptions from external libraries
             pass
 
-def tabulate_processes(process_info=[]):
-    if not process_info:
-        print("\t** No Running Processes **")
-        return None
-
-    # display panel showing running processes
-    headers = ['PID', 'Name', 'Status' ,'Number of Threads']
-    process_table = tabulate(process_info, headers=headers, tablefmt="grid")
-    return process_table
-
-def tabulate_threads(thread_info=[]):
-    if not thread_info:
-        print("\t** No Running Threads **")
-        return None
-
-    # display panel showing running processes
-    headers = ['TID', 'is alive?']
-    thread_table = tabulate(thread_info, headers=headers, tablefmt="grid")
-    return thread_table
-
-def display_system(process_info, thread_info):
-    # display processes first
-    if not process_info:
-        print("\t** No Running Processes **")
-
-    elif process_info:
-        print("\tProcesses:")
-        print(tabulate_processes(process_info))
-
-
-    if not thread_info:
-        print("\t** No Running Threads **")
-    elif thread_info:
-        print("\n*****************************************")
-        print("\tThreads:")
-        print(tabulate_threads(thread_info))
-
 
 if __name__ == "__main__":
     main()
+

@@ -10,6 +10,7 @@ class ThreadManager:
         thread = threading.Thread(target=target, args=args)
         thread.start()
         self.active_threads[thread.ident] = thread # saving thread by its TID
+        return thread.ident
 
     def get_thread(self, tid):
         return self.active_threads[tid]
