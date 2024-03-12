@@ -1,7 +1,10 @@
 # this is the entry point to the operating system. This file dispatches all other necessary resources and libraries
 import argparse # module used for interpreting user commands
+from tabulate import tabulate
 from command_handler import CommandHandler
 
+def debug(arg):
+    print(f"\tARGS={arg}")
 def main():
     """initializing application resources here"""
     OS_LOGO = (f"\n      _.-;;-._ "
@@ -10,19 +13,8 @@ def main():
                f"\n-..-'|   ||   |"
                f"\n-..-'|_.-''-._|")
 
-    OS_FAREWELL = \
-     (f"\n▐▓█▀▀▀▀▀▀▀▀▀█▓▌░▄▄▄▄▄░"
-      f"\n▐▓█░ Good  ░█▓▌░█▄▄▄█░"
-      f"\n▐▓█░ ▄Bye!▀░█▓▌░█▄▄▄█░"
-      f"\n ▓█▄▄▄▄▄▄▄▄▄█▓▌░█████░"
-      f"\n░░░░▄▄███▄▄░░░░░█████░")
+    OS_HELP_MSG = f"Welcome to psuOS { OS_LOGO }"
 
-    OS_WELCOME_MSG = (f"**********************************"
-                      f"\n* ㋡     Welcome to psuOS      ㋡ *"
-                      f"\n*    Program by: Aaron Feinberg  *"       
-                      f"\n**********************************"
-                      f"\n"
-                      f"{ OS_LOGO }")
 
     parser = argparse.ArgumentParser(description='Task Manger') # setting up the main parser
     subparsers = parser.add_subparsers(dest='command', required=True)  # defining sub parsers for each command and thier args
@@ -38,6 +30,9 @@ def main():
     # help
     os_help = os_cmds.add_parser('help', help='Displays a list of all commands')
 
+    # list all user apps
+    os_apps = os_cmds.add_parser('apps', help='Displays a list of all available applications')
+
         # PARSERS FOR PROCESSES
 
     process_parser = subparsers.add_parser('process', help='Manage Processes')
@@ -49,16 +44,16 @@ def main():
 
     # killing processes
     process_kill = process_subparsers.add_parser('kill', help='Terminate a process that is currently running')
-    process_kill.add_argument('PID', help='Proces ID')
+    process_kill.add_argument('process_name', help='Name of the process')
     process_kill.add_argument('--f', action='store_true', help='Force kill the process')
 
     # suspending processes
     process_suspend = process_subparsers.add_parser('suspend', help='Pause the execution of a process')
-    process_suspend.add_argument('PID', help='Proces ID')
+    process_suspend.add_argument('process_name', help='Name of the process')
 
     # resuming processes
     process_resume = process_subparsers.add_parser('resume', help='Resume a currently running process')
-    process_resume.add_argument('PID', help='Proces ID')
+    process_resume.add_argument('process_name', help='Name of the process')
 
        # PARSERS FOR THREADS
 
@@ -82,21 +77,28 @@ def main():
     thread_resume.add_argument('thread_name', help='Name of the thread')
 
 
+
     # -- welcome page --
-    print(OS_WELCOME_MSG, end='\n\n')
+    print(OS_HELP_MSG, end='\n\n')
+
+    # setup handler instance
+    cmd_handler = CommandHandler()
 
     # << program loop >>
     while True:
         try:
-            user_cmd = input("㋡ >> ")
+            user_cmd = input(">> ")
 
             if user_cmd == 'exit':
-                print("\nExiting...")
-                print(OS_FAREWELL)
                 break
 
             # give the parser the arguments
             args = parser.parse_args(user_cmd.split())
+
+            # debuging for some problems
+            debug(args)
+
+            cmd_handler.handle_command(args) # give commands with args to the cmd handler
 
             # handler will execute the commands
             #   ... code here plz
@@ -108,3 +110,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

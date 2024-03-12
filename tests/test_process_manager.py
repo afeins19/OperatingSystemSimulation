@@ -2,14 +2,19 @@
 import time
 import unittest
 import sys
-sys.path.append(r'C:\Users\aaron\Projects\classWork\CMPSC472\OperatingSystemSimulation')
+sys.path.append(r'/Users/aaronfeinberg/Projects/classWork/CMPSC472/OperatingSystemSimulation')
 import multiprocessing
+from multiprocessing import Array, Process, Value
 
 from process_manager import ProcessManager
 
 def sample_process():
     time.sleep(2)
 
+def increment_shared_value(shared_value: multiprocessing.Value):
+    if shared_value:
+        with shared_value.get_lock():
+            shared_value.value += 1
 
 class TestProcessManager(unittest.TestCase):
 
@@ -39,7 +44,29 @@ class TestProcessManager(unittest.TestCase):
             self.assertEqual(pid, self.pm.active_processes[pid][1].pid)
 
     def test_inactive_process_lookup(self):
-        return self.assertEquals(self.pm.get_process(-1), None)
+        return self.assertEqual(self.pm.get_process(-1), None)
+
+    def test_shared_value_creation(self):
+        shared_val = self.pm.create_shared_value('i', 0)
+        self.assertEqual(shared_val.value, 0)
+
+    def test_increment_shared_value(self):
+        # testing incrementing the shared value via multiple processes
+        shared_val = self.pm.create_shared_value('i', 0)
+
+        # create some processes
+        pids = []
+
+        for i in range(5): # make some processes to increment the shared value
+            ps = self.pm.start_process(f"test_{i}", increment_shared_value, shared_val)
+            time.sleep(.1)
+            pids.append(ps)
+
+        for pid in pids:
+            print(pid)
+            self.pm.active_processes[pid][1].join() # wait until each process finishes before checking value
+
+        self.assertEqual(shared_val.value, 5)
 
 
 
