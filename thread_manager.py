@@ -8,15 +8,21 @@ class ThreadManager:
     def __init__(self):
         self.active_threads = {}
 
-    def start_thread(self, target, *args):
+    def start_thread(self, target, args):
         # creating an events for user command listening
         pause_event = threading.Event()
         resume_event = threading.Event()
         stop_event = threading.Event()
 
+        events = (pause_event, resume_event, stop_event)
 
         # starting a thread
-        thread = threading.Thread(target=target, args=(pause_event, resume_event, stop_event))
+        if args:
+            full_args = args + events # append control events to the arg tuple
+        else:
+            full_args = events
+
+        thread = threading.Thread(target=target, args=full_args)
         thread.start()
 
         self.active_threads[thread.ident] = (thread, stop_event, pause_event)  # saving thread by its TID
@@ -50,11 +56,12 @@ class ThreadManager:
 
     def kill_thread(self, tid, force=False):
         tid = int(tid)
+        print(self.active_threads[tid])
 
         if tid in self.active_threads.keys():
             # get the thread
             print(tid)
-            thread_actual, stop_event = self.active_threads[tid]
+            thread_actual, pause_event, stop_event = self.active_threads[tid]
             stop_event.set() # stop the thread
 
             #if not force:
@@ -62,10 +69,11 @@ class ThreadManager:
 
 
             del self.active_threads[tid] # remove the thread after a stopping
-
+            print(f"Thread { tid } has been stopped")
             lgr.info(f"Thread { tid } has been stopped")
 
         else:
+            print(f"** Thread with [TID={ tid }] not found **")
             lgr.info(f"** Thread with [TID={ tid }] not found **")
             pass
     def suspend_thread(self, tid):

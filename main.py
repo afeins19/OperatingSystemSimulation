@@ -9,6 +9,7 @@ lgr = setup_logger(__name__)
 def debug(arg):
     print(f"\tARGS={arg}")
 
+
 def process_user_input(parser, command_handler):
     # setup handler instance
     psr = parser

@@ -135,7 +135,7 @@ class CommandHandler:
         if args:
             self.thread_manager.start_thread(function_to_execute, args)
         else:
-            self.thread_manager.start_thread(function_to_execute)
+            self.thread_manager.start_thread(function_to_execute, args)
 
     def suspend_thread(self, tid):
         self.thread_manager.suspend_thread(tid=tid)

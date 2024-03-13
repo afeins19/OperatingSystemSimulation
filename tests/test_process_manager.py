@@ -8,7 +8,6 @@ from multiprocessing import Array, Process, Value
 
 from process_manager import ProcessManager
 
-
 def sample_process():
     time.sleep(2)
 

@@ -4,6 +4,7 @@ import logging as lg
 from log_config import setup_logger
 from multiprocessing import Queue, Value, Array, Process
 from threading import Thread
+from thread_manager import ThreadManager
 
 from process_manager import ProcessManager
 
@@ -13,7 +14,7 @@ class AppManager:
 
         self.name_table = {
             'test_process' : AppManager.test_process,
-            'test_thread' : AppManager.test_thread_kill, # args = stop_event that we have to pass in
+            'test_thread' : AppManager.test_thread, # args = stop_event that we have to pass in
             'count' : AppManager.process_file
         } # maps names to the actual functions for users
 
@@ -44,7 +45,7 @@ class AppManager:
             time.sleep(1)
 
     @staticmethod
-    def test_thread_kill(stop_event, resume_event, suspend_event):
+    def test_thread(stop_event, resume_event, suspend_event):
         while not stop_event.is_set():
             if suspend_event.is_set():
                 # thread paused, wait for resume event
@@ -61,7 +62,7 @@ class AppManager:
 
     @staticmethod
     def process_file(process_control):
-        num_ps = 4
+        num_threads = 4
         file_name = "shrek.txt"
 
         # read the entire file and split into lines
@@ -70,24 +71,39 @@ class AppManager:
 
         # shared queue to hold the count
         char_queue = Queue()
-
+        capitalize_queue = Queue()
         # partition the text and count the chars using workers
-        partioned_text = AppManager.divide_file(process_control, text_lines, num_ps)
+        partioned_text = AppManager.divide_file(process_control, text_lines, num_threads)
 
         # start worker processes
-        pm = ProcessManager()
 
-        processes = []
+        tm = ThreadManager()
+
+        threads = []
+
+        # starting counter processes
         for i, text_chunk in enumerate(partioned_text):
-            process_name = f'worker_{i}'
-            args = (char_queue, text_chunk)
-            pm.start_process(process_name, AppManager.count_chars, *args)
-            processes.append(process_name)
+            count_args = (char_queue, text_chunk)  # args for count_chars
+            counter_thread_tid = tm.start_thread(target=AppManager.count_chars, args=count_args)
+            threads.append(counter_thread_tid)
 
-        print(f"Running Processes: {processes}")
+        # starting captilization processes
+        for i, text_chunk in enumerate(partioned_text):
+            capitalize_args = (capitalize_queue, text_chunk) # args for capitalize function
+            capitalize_thread_tid = tm.start_thread(target=AppManager.capitalize_text, args=capitalize_args)
+            threads.append(capitalize_thread_tid)
+
 
         chars=char_queue.get()
-        lgr.info(chars)
+        caps=capitalize_queue.get()
+
+        if len(chars) > 0:
+            lgr.info(f"Char Count: { chars }")
+            print("[[ PROCESS FINISHED ]]")
+
+            # write the capitlized chars
+            with open(f"capitalized_{ file_name }", 'w+') as file:
+                file.writelines(caps)
 
     @staticmethod
     def divide_file(process_control, text_lines, num_ps):
@@ -103,15 +119,28 @@ class AppManager:
         return partioned_text
 
     @staticmethod
-    def count_chars(process_control, char_queue, text_chunk):
+    def count_chars(char_queue, text_chunk, pause_event, resume_event, stop_event):
         # count the occurrences of each character in a text chunk
         char_counts = {}
+
         for line in text_chunk:
             for char in line:
-                char_counts[char] = char_counts.get(char, 0) + 1
+                if char != r"\\":
+                    char_counts[char] = char_counts.get(char, 0) + 1
 
         # put the character counts into the shared queue
         char_queue.put(char_counts)
+
+    @staticmethod
+    def capitalize_text(captilazied_queue, text_chunk, pause_event, resume_event, stop_event):
+        processed_text = []
+
+        for line in text_chunk:
+            for word in line:
+                processed_text.append(str(word).capitalize())
+
+        captilazied_queue.put(processed_text)
+
 
 
 

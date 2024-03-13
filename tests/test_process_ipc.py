@@ -19,6 +19,7 @@ def increment_shared_value(process_control, name, shared_value):
 
 def decrement_shared_value(process_control, name, shared_value):
     if shared_value:
+        print(shared_value)
         with shared_value.get_lock():
             shared_value.value -= 1
             print(shared_value.value)
@@ -99,8 +100,8 @@ class TestProcessManagerIPC(unittest.TestCase):
         print(f"Time for long messages: {end_time - start_time}")
 
     def test_shared_value_message_passing(self):
-        increment_process = self.pm.start_process("increment", increment_shared_value, self.shared_value, "increment")
-        decrement_process = self.pm.start_process("decrement", decrement_shared_value, self.shared_value, "decrement")
+        increment_process = self.pm.start_process("increment", increment_shared_value, "increment", self.shared_value)
+        decrement_process = self.pm.start_process("decrement", decrement_shared_value, "decrement", self.shared_value)
 
         increment_process.start()
         decrement_process.start()
