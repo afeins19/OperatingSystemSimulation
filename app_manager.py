@@ -34,10 +34,10 @@ class AppManager:
                 print(f">>>MSG FROM PROCESS : Process paused.")
                 # wait for resume
                 process_control.resume_event.wait()
-                # Clear pause
+                # clear pause
                 process_control.pause_event.clear()
                 print(f">>>MSG FROM PROCESS : Process resumed.")
-            # Check stop
+            # checj stop
             if process_control.stop_event.is_set():
                 print(f">>>MSG FROM PROCESS : Process stopped.")
                 return
