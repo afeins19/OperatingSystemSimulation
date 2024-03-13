@@ -172,6 +172,15 @@ much in the same way `process_manager` handles processes. `thread_manager` deals
 the app manager allows us to quickly map process names to the functions that they represent. That way, the user can request from the OS a list of application and create processes or threads which run those functions by referenceing the function alias stored in the `name_table` of the `app_manager`. 
 For any kind of parallel processing to work in python, it is a requirement that the method being called is static - essentially a class method. Since threads require all 3 signals to be defined, each function thats intended to be run by a thread must support these parameters even if it does not use them as they are automatically passed from the thread_manager when the thread is created (likewise for the process_manager if the function is being run by a process). 
 
+# Logging 
+most outputs and commands were logged in a file called `USER_SESSION.log`. This made it possible to quickly save the session history as well as circumvent issues with processes and threads printing to the console when we were blocking to await user input. Below is a snippet of code showing how the log tracks a user session: 
+```
+2024-03-13 01:02:16,573 - INFO - main - [[ STARTUP SUCCESFUL ]]
+2024-03-13 01:02:23,234 - INFO - main - USER_INPUT: process start test_process
+2024-03-13 01:02:23,235 - INFO - main - [[ USER INPUT : Namespace(command='process', process_command='start', process_name='test_process')
+2024-03-13 01:02:23,245 - INFO - process_manager - [[ Started process 'test_process' | PID: 42992 ]]
+```
+
 # Demonstration
 below are the demonstrations of the project requirements for the following
 - processes
