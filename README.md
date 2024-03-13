@@ -7,7 +7,7 @@ This program is designed to simulate some fundemental operating system operation
 - Message passing
 - Shared memory allocation 
 
-# Usage Manual 
+# User Manual 
 This OS supports a few commands with subcommands and arguments. Generally it follows the following structure:
 
 ### Command Syntax
