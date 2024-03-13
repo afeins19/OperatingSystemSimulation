@@ -1,4 +1,4 @@
-# OperatingSystemSimulation
+# Operating System Simulation
 
 This program is designed to simulate some fundemental operating system operations. These include:
 - Process creation, suspension and termination
@@ -386,7 +386,7 @@ SHREK
                after the ogre...
 ```
 ### Charecter Count Output (in log)
-a log is used to track all commands and events within a session. Below is a snippet of the log showing the result of the charecter count process (this may be found in `USER_SESSION.log`: 
+a log is used to track all commands and events within a session. Below is a snippet of the log showing the result of the charecter count process (this may be found in `USER_SESSION.log`): 
 ```
 2024-03-13 00:45:11,350 - INFO - main - [[ STARTUP SUCCESFUL ]]
 2024-03-13 00:45:16,672 - INFO - main - USER_INPUT: process start count
