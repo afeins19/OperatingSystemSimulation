@@ -274,55 +274,15 @@ Ran 5 tests in 3.104s
 
 FAILED (errors=1, successes=4)
 [[ Started process 'ipc_message_queue_test' | PID: 35944 ]]
-Process ipc_message_queue_test:
-Traceback (most recent call last):
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 315, in _bootstrap
-    self.run()
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-TypeError: ipc_message_queue_test() takes 1 positional argument but 2 were given
-[[ Started process 'ipc_shared_value_test' | PID: 31156 ]]
-Process ipc_shared_value_test:
-Traceback (most recent call last):
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 315, in _bootstrap
-    self.run()
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-TypeError: ipc_shared_value_test() takes 1 positional argument but 2 were given
-Process Producer:
 [[ Started process 'Producer' | PID: 16924 ]]
-Traceback (most recent call last):
-[[ Started process 'Consumer' | PID: 17448 ]]
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 315, in _bootstrap
-    self.run()
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-TypeError: producer() takes 2 positional arguments but 3 were given
-Process Consumer:
-Traceback (most recent call last):
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 315, in _bootstrap
-    self.run()
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-TypeError: consumer() takes 2 positional arguments but 3 were given
+
 Time for long messages: 1.0836842060089111
+
 [[ Started process 'Producer' | PID: 24072 ]]
 [[ Started process 'Consumer' | PID: 25156 ]]
-Process Producer:
-Traceback (most recent call last):
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 315, in _bootstrap
-    self.run()
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-TypeError: producer() takes 2 positional arguments but 3 were given
-Process Consumer:
-Traceback (most recent call last):
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 315, in _bootstrap
-    self.run()
-  File "C:\Users\aaron\AppData\Local\Programs\Python\Python39\lib\multiprocessing\process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-TypeError: consumer() takes 2 positional arguments but 3 were given
+
 Time for short messages: 0.8217775821685791
+
 [[ Started process 'increment' | PID: 12908 ]]
 [[ Started process 'decrement' | PID: 33032 ]]
 
